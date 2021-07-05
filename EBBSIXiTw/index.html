@@ -1,12 +1,12 @@
 
 <html>
-  <head lang="zh">
+<head lang="zh">
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
         <meta content="yes" name="apple-mobile-web-app-capable"/>
         <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
         <meta content="telephone=no" name="format-detection"/>
         <meta name="renderer" content="webkit">
-    <title>蓝队溯源分析之新手养成记 | P1and</title>
+    <title>P1and</title>
 <link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/>
 <script type="text/javascript" src="https://p1and.github.io/media/scripts/jquery.js"></script>
 <script type="text/javascript" src="https://p1and.github.io/media/scripts/basic.js"></script>
@@ -16,7 +16,7 @@
   </head>
 
   <body>
-     <div class="header">
+    <div class="header">
       <div class="logo_title">
 		  
         <div class="title animated fadeInDown"><img src="https://p1and.github.io/images/avatar.png?v=1625454342888"/>
@@ -126,7 +126,6 @@
     <div class="main">
       <div class="main-inner">
 
-
 <div class="content">
 
 
@@ -134,29 +133,25 @@
 
 
 
-  <div class="post_page" >
+  <div class="post_list" >
 
+	
 <div class="post">
-  <div class="post_title sm_margin">
-    <h2><a>蓝队溯源分析之新手养成记</a>
-
-
-
+  <div class="post_title weaklink">
+    <h2><a href="https://p1and.github.io/lan-dui-zhi-su-yuan-fen-xi/" >蓝队溯源分析之新手养成记</a>
     </h2>
   </div>
-
-  <div class="post_details">
-    <div class="info"><i class="fa fa-clock-o"></i>
+  <div class="post_content markdown"><div class="p_part"><p></p></div></div>
+  <div class="post_footer">
+    <div class="info weaklink"><i class="fa fa-clock-o"></i>
 <span class="date_info">2021-06-17</span>
-<i class="fa fa-eye"></i>
-
-<span class="date_info"><span id="busuanzi_value_page_pv"></span> Views</span>
-
 
 <i class="fa fa-bookmark-o"></i>
+	
 <span class="tags_info weaklink">
 	
 	<a href="https://p1and.github.io/EBBSIXiTw/" class="tag">原创</a>
+
 
 
 </span>
@@ -166,58 +161,19 @@
 
   </div>
 
-
-
-
-
-  <div class="post_content markdown"><p class="md_block">
-    <span class="md_line md_line_start md_line_end"><p>作为<s>唱跳</s>工作将近三年的<s>优秀</s>安服小学生，因为所处团队关系，经常在应急，所以对应急有一乃乃的经验。<br>
-#溯源入门</p>
-<pre><code>对于新手来说，最好刚开始接触那种“最幸福”的事件：
-    1、日志齐全。别管它是应用日志还是服务器日志，突出的就是一个全字；
-    2、设备齐全。公司家大业大，能够把该上的安全设备都上了，就是一个字“壕”；
-    3、样本齐全。此处的样本指的是恶意文件，木马等，我可以根据这个最后结果一步步进行反推。
-</code></pre>
-<p>#溯源步骤<br>
-对于上述情况，你在溯源分析中可真是遇见最舒服的事情了，偷偷的笑吧。有着最强大的线索——样本文件，你可以根据文件名字来进行反推。</p>
-<pre><code>    1、要注意“大小马”大多数是可以先从应用日志进行查找；
-    2、恶意文件大多数可以先从系统日志进行查找；
-    3、对于登陆情况可以先排查异常情况下登陆成功的，之后再结合登陆失败的一起进行筛选；
-    4、最便于梳理，也是最便于客户看的是一张黑客攻击的流程图，提现三要素（时间，IP，做了什么事情）
-    5、千万千万学会用正则，用了正则，妈妈再也不担心我进行溯源分析了；
-    6、工欲善其事，必先利其器，找到适合自己的文本分析工具，譬如：我喜欢用Sublime Text、我老大喜欢用UltraEdit，我同事喜欢用notepad等等，看自己那个顺手用哪个。
-</code></pre>
-<p>但是大多数情况下，日志肯定不会那么齐全，或许是黑客删除，或许是应急单位留存不够等等各种各样的情况，兄弟们，不要慌，勇敢的面对它，奥利给。</p>
-<pre><code>    1、对于日志缺失的应急事件，你要找到那个源点，比如：篡改就是有文件，入侵是哪个漏洞，挂马就是大小马等等。
-    2、与红队攻击不同，我们蓝队做的是反推，根据入侵者留下的痕迹按图索骥，所以必须找到关键点，把每个点窜在一起就是入侵者的攻击线路。
-</code></pre>
-<p>#技巧<br>
-##关键点</p>
-<pre><code>    1、可以在入侵服务器上查找大小马，篡改文件等；我记得在对某企业进行溯源时，查找的就是某黑客特有的篡改网页的标志，当时是在网站源码上查找被上传并篡改的图片，然后在日志中进行查找这个特有的点；
-    2、可以看下被入侵的是什么系统，能够拿shell的漏洞有什么；我记得在对某单位进行溯源时，该单位的网络管理员不知道用的什么CMS，而且网站因为影响已经关闭，当时是在FOFA上找到了该网站用的漏洞，然后正好此CMS有远程命令执行，在支离破碎未被删除的日志中的确找到了该漏洞利用；
-    3、对于受害单位有很多网络资产与系统，并且有数据泄漏，大概率可以从API接口入手；我记得在对某企业进行溯源时，该单位每日产生的流量有十几个G，网络资产梳理了一天还没给到结果，日志也被删除，幸亏当时该企业上了探针，记录有数据，最后的结果的确是从API接口泄漏的；
-</code></pre>
-<p>##正则<br>
-兄弟们相信我，正则是真的好用：<br>
-<img src="https://p1and.github.io/post-images/1624602251708.png" alt="" loading="lazy"><br>
-IPV4表达式：<br>
-<code>((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}</code><br>
-身份证号(15位、18位数字)，最后一位是校验位，可能为数字或字符X：<br>
-<code>(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)</code></p>
-</p>
-
-     <p class="md_block">
-    <div class="reward"><div class="reward-button">赏 <span class="reward-code"> <span class="alipay-code"> <img class="alipay-img" src="https://p1and.github.io/media/images/alipay.png"><b>支付宝扫码打赏</b> </span> <span class="wechat-code"> <img class="wechat-img" src="https://p1and.github.io/media/images/wechat.png"><b>微信打赏</b> </span> </span></div></div>
-</p> 
 </div>
+	
+	
 
-</div>
+<div class="paginator pager pagination" >
+	
 
 
 
-<link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/>
+    <div style="clear:both;height:0;"></div>
 
-<div class="doc_comments">
+
+  </div>
 
 </div>
 
@@ -230,12 +186,9 @@ IPV4表达式：<br>
 
       </div>
 
-
-
-
     </div>
 
-   <div class="footer">
+    <div class="footer">
 <link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/><div class="site_footer_wrap"><div class="site_footer">
 
       <div class="mysocials"><div class="my_socials">

